@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 
 import sequelize from '../../../database/db';
-import Employee from '../../../models/employee';
+import { Employee } from '../../employees';
 
 const Process = sequelize.define('Process', {
   id: {
@@ -13,7 +13,7 @@ const Process = sequelize.define('Process', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  exit_from_process: {
+  exitFromProcess: {
     type: DataTypes.STRING,
   },
   VDlink: {
@@ -22,14 +22,14 @@ const Process = sequelize.define('Process', {
   status: {
     type: DataTypes.STRING,
   },
-  process_owner_id: {
+  processOwnerId: {
     type: DataTypes.INTEGER,
     references: {
       model: Employee,
       key: 'id',
     }
   },
-  analyst_id: {
+  analystId: {
     type: DataTypes.INTEGER,
     references: {
       model: Employee,
