@@ -13,6 +13,9 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     charset: 'utf8',
     collate: 'utf8_general_ci',
   },
+  query: {
+    raw: true,
+  },
 });
 
 export default sequelize;

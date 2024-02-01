@@ -1,7 +1,6 @@
 What do I have to do:
-- Make sure that id types everywhere are either have string type or have number type
-- Make sure that relations work well with all models
-- Make sure to change fields like analyst_id to camelCase in database tables
+
+- Thing about uniquness of all fields
 - Do all routers
 
 ```http
@@ -9,7 +8,7 @@ What do I have to do:
   + GET /processes/:id
   + POST /processes
   + PUT /processes/:id
-  + DELETE /processes/:id
+  DELETE /processes/:id
 
   <!-- POST /processes/:id/migration
   {
@@ -18,7 +17,7 @@ What do I have to do:
   } -->
 
   GET /processes/:id/children
-  POST /processes/children
+  + POST /processes/:id/children
 
   + GET /employees
   + GET /employees/:id

@@ -12,7 +12,6 @@ const ProcessRelation = sequelize.define('Process_relation', {
   parentId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true,
     references: {
       model: Process,
       key: 'id',
@@ -28,7 +27,7 @@ const ProcessRelation = sequelize.define('Process_relation', {
   },
 });
 
-ProcessRelation.belongsTo(Process, { foreignKey: 'parent_id', as: 'parentId' });
-ProcessRelation.belongsTo(Process, { foreignKey: 'child_id', as: 'childId' });
+ProcessRelation.belongsTo(Process, { foreignKey: 'parentId', as: 'parentProcess' });
+ProcessRelation.belongsTo(Process, { foreignKey: 'childId', as: 'childProcess' });
 
 export default ProcessRelation;

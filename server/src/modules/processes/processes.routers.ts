@@ -3,10 +3,12 @@ import Router from 'express';
 import { 
   getAllProcesses,
   getProcessById,
-  createNewProcess,
+  createFirstLevelProcess,
   updateProcess,
   deleteProcess,
+  deleteAllProcesses,
   getAllProcessDirectChildren,
+  createChildProcess,
 } from './processes.controllers';
 
 const router = Router();
@@ -39,11 +41,11 @@ router.post('/', async (req, res) => {
       exitFromProcess,
       VDlink,
       status,
-      processOwnerId: process_owner_id,
-      analystId: analyst_id,
+      processOwnerId,
+      analystId,
     } = req.body;
 
-    await createNewProcess({ name, exitFromProcess, VDlink, status, processOwnerId, analystId });
+    await createFirstLevelProcess({ name, exitFromProcess, VDlink, status, processOwnerId, analystId });
     res.status(201).send('Process was successfully created');
   } catch (e) {
     res.status(500).send(e);
@@ -57,16 +59,13 @@ router.put('/:id', async (req, res) => {
       exitFromProcess,
       VDlink,
       status,
-      processOwner,
-      analyst,
+      processOwnerId,
+      analystId,
     } = req.body;
 
     const { id } = req.params;
 
-    await updateProcess({ name, exitFromProcess, VDlink, status, processOwner, analyst }, id);
-    // const idOfUpdatedProcess = await updateProcess({ name, exitFromProcess, VDlink, status, processOwner, analyst }, id);
-    // const process = await getProcessById(String(idOfUpdatedProcess));
-    // res.status(200).json(process);
+    await updateProcess({ name, exitFromProcess, VDlink, status, processOwnerId, analystId }, id);
     res.status(200).send('Process was successfully updated');
   } catch (e) {
     res.status(500).send(e);
@@ -83,13 +82,42 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.delete('/', async (req, res) => {
+  try {
+    await deleteAllProcesses();
+    res.sendStatus(204);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
+
+
 router.get('/:id/children', async (req, res) => {
   try {
     const { id } = req.params;
 
-    const lol = await getAllProcessDirectChildren(id);
-    console.log(lol);
+    const childrenOfProcess = await getAllProcessDirectChildren(id);
+    res.status(200).send(childrenOfProcess);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
 
+router.post('/:id/children', async (req, res) => {
+  try {
+    const { id: parentProcessId } = req.params;
+
+    const {
+      name,
+      exitFromProcess,
+      VDlink,
+      status,
+      processOwnerId,
+      analystId,
+    } = req.body;
+
+    await createChildProcess(parentProcessId, { name, exitFromProcess, VDlink, status, processOwnerId, analystId });
+    res.status(201).send('Child process was succsessfully created');
   } catch (e) {
     res.status(500).send(e);
   }

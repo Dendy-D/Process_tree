@@ -12,6 +12,7 @@ const Process = sequelize.define('Process', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   exitFromProcess: {
     type: DataTypes.STRING,
@@ -38,7 +39,7 @@ const Process = sequelize.define('Process', {
   },
 });
 
-Process.belongsTo(Employee, { foreignKey: 'process_owner_id', as: 'processOwner' });
-Process.belongsTo(Employee, { foreignKey: 'analyst_id', as: 'analyst' });
+Process.belongsTo(Employee, { foreignKey: 'processOwnerId', as: 'processOwner' });
+Process.belongsTo(Employee, { foreignKey: 'analystId', as: 'analyst' });
 
 export default Process;
