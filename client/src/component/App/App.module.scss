@@ -1,0 +1,56 @@
+.component {
+
+  .logo {
+    margin: 46px 0 30px 46px;    
+  }
+
+  hr {
+    border-top: 3px solid #5B5B5B;
+    margin: 0 100px;
+  }
+
+  main {
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .description {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+
+      .leftSide {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+
+        h1 {
+          font-weight: 600;
+          font-size: 82px;
+          line-height: 95px;
+          max-width: 430px;
+        }
+    
+        p {
+          font-size: 32px;
+          font-weight: 300;
+          max-width: 280px;
+          line-height: 37.5px;
+        }
+      }
+    }
+
+    .structure {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 82px;
+      padding-top: 20px;
+      background-color: #94CE87;
+      border-top-right-radius: 15px;
+    }
+  }
+}
