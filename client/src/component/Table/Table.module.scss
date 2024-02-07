@@ -1,0 +1,50 @@
+.component {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+
+  table {
+    border-collapse: collapse;
+    justify-self: center;
+
+    thead {
+      border-bottom: 1px solid #5B5B5B;
+
+      th {
+        font-weight: 300;
+        font-size: 14px;
+        padding: 0 65px 8px 65px;
+      }
+    }
+
+    .tableRow {
+      border-bottom: 1px solid #5B5B5B;
+
+      td {
+        font-weight: 300;
+        font-size: 24px;
+        padding: 11px 65px;
+      }
+    }
+  }
+
+  .addFirstLevelProcess {
+    width: 260px;
+    margin-top: 20px;
+    font-weight: 200;
+    font-size: 20px;
+    transition: color 0.1s linear;
+    
+    span {
+      font-weight: 300;
+      font-size: 18px;
+      margin-right: 10px;
+      transition: color 0.1s linear;
+    }
+
+    &:hover {
+      color: #646464;
+      transition: 0.1s linear;
+    }
+  }
+}

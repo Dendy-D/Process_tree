@@ -1,0 +1,43 @@
+.component {
+  font-size: 14px;
+  font-weight: 300;
+
+  .radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+
+    .radioInput {
+      position: absolute;
+      opacity: 0;
+      z-index: -1;
+    }
+
+    .radioInput:checked + .radioCustom {
+      background-color: #4FAF3B;
+      outline-color: #4FAF3B;
+    }
+
+    .radioCustom {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 2px solid white;
+      outline: 1px solid #919191;
+    }
+
+    .labelContent {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .circle {
+      width: 5px;
+      height: 5px;
+      border-radius: 100%;
+    }
+  }
+}

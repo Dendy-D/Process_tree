@@ -31,6 +31,19 @@ ul {
   list-style: none;
 }
 
-button {
+hr {
+  border: none;
+}
+
+input, select {
   outline: none;
+  border: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  background-color: transparent;
 }
