@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import Arrow from '../../assets/icons/arrowForSelect.svg?react';
 import RadioButton from '../ui/RadioButton';
 import classes from './CreateProcessForm.module.scss';
 
@@ -74,11 +75,18 @@ const CreateProcessForm: React.FC<Props> = ({ levelOfProcess, onClose }) => {
       </div>
       <div className={classes.formGroup}>
         <label htmlFor="processOwner">Владелец процесса</label>
-        <select name="" id="processOwner"></select>
+        <select name="processOwner" id="processOwner">
+          <option value="someOption">Some option</option>
+          <option value="otherOption">Other option</option>
+          <option value="someOption">Some option</option>
+          <option value="otherOption">Other option</option>
+          <option value="someOption">Some option</option>
+          <option value="otherOption">Other option</option>
+        </select>
       </div>
       <div className={classes.formGroup}>
         <label htmlFor="businessAnalyst">Бизнес-аналитик</label>
-        <select name="" id="businessAnalyst"></select>
+        <select name="businessAnalyst" id="businessAnalyst"></select>
       </div>
       <div className={classes.buttonGroup}>
         <button className={classes.cancelButton} onClick={onClose}>Отмена</button>

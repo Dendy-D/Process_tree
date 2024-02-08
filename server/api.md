@@ -16,7 +16,7 @@ What do I have to do:
     formerParent: number
   } -->
 
-  GET /processes/:id/children
+  + GET /processes/:id/children
   + POST /processes/:id/children
 
   + GET /employees
@@ -48,6 +48,8 @@ interface ProcessRelation {
   child: Process
 }
 ```
+
+Name is unique field
 
 ## Questions:
 

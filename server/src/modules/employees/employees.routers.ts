@@ -9,7 +9,8 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const employees = await getAllEmployees();
+    const { isAnalyst } = req.query;
+    const employees = await getAllEmployees(isAnalyst === 'true');
     res.status(200).send(employees);
   } catch (e) {
     res.status(500).send(e);

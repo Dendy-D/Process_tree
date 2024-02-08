@@ -1,7 +1,10 @@
 import Employee from './models/employee';
 
-const getAllEmployees = async () => {
+const getAllEmployees = async (isAnalyst: boolean) => {
+  const whereClause = isAnalyst ? { isAnalyst: true } : {};
+
   return await Employee.findAll({
+    where: whereClause,
     attributes: {
       exclude: ['createdAt', 'updatedAt'],
     }
