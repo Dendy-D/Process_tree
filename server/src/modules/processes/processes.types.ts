@@ -1,35 +1,44 @@
-import { EmployeeT } from '../employees';
+import { EmployeeType } from '../employees';
 
-type ProcessT = {
+type Process = {
   id: number;
   name: string;
+  isFirstLevel: boolean;
   exitFromProcess?: string;
   VDlink?: string;
   status?: string;
-  processOwner?: EmployeeT;
-  analyst?: EmployeeT;
+  processOwner?: EmployeeType;
+  analyst?: EmployeeType;
 };
 
-type CreateProcessT = {
+type CreateProcess = {
+  name: string;
+  isFirstLevel: boolean;
+  exitFromProcess?: string;
+  VDlink?: string;
+  status?: string;
+  processOwnerId?: number;
+  analystId?: number;
+}
+
+type UpdateProcess = {
   name?: string;
   exitFromProcess?: string;
   VDlink?: string;
   status?: string;
-  processOwnerId: number;
+  processOwnerId?: number;
   analystId?: number;
-}
-
-type UpdateProcessT = CreateProcessT;
+};
 
 type ProcessRelation = {
   id: number;
-  parent: ProcessT;
-  child: ProcessT;
+  parent: Process;
+  child: Process;
 }
 
 export {
-  ProcessT,
-  CreateProcessT,
-  UpdateProcessT,
+  Process,
+  CreateProcess,
+  UpdateProcess,
   ProcessRelation,
 };

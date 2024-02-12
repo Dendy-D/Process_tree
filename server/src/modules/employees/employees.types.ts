@@ -1,4 +1,4 @@
-type EmployeeT = {
+type Employee = {
   id: number;
   name: string;
   position: string;
@@ -7,5 +7,5 @@ type EmployeeT = {
 };
 
 export {
-  EmployeeT,
+  Employee,
 };

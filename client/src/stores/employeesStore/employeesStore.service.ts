@@ -1,10 +1,9 @@
 import axiosApi from '../../services/api/axiosApi';
-import { EmployeeT } from '../../types';
+import { Employee } from '../../types';
 
 class EmployeesService {
-  getAllEmployees = async (isAnalyst?: boolean): Promise<EmployeeT[]> => {
-    const params = isAnalyst ? { isAnalyst: true } : {};
-    return axiosApi.get<EmployeeT[]>('/employees', { params })
+  getAllEmployees = async (): Promise<Employee[]> => {
+    return axiosApi.get<Employee[]>('/employees')
   };
 }
 

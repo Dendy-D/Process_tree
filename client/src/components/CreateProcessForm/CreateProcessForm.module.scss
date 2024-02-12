@@ -20,6 +20,10 @@
     font-weight: 500;
   }
 
+  .invalid {
+    background-color: rgba(255, 0, 0, 0.61);
+  }
+
   .wrapper {
     display: flex;
     justify-content: space-between;
@@ -64,7 +68,7 @@
       height: 28px;
       border-radius: 100px;
       width: 215px;
-      padding: 0 10px;
+      padding: 0 30px;
 
       // adding two arrows to the right and to the left in the selector 
       background-image: url('../../assets/icons/person.svg'), url('../../assets/icons/arrowForSelect.svg');
@@ -112,9 +116,10 @@
       background-color: #4FAF3B;
       transition: background-color 0.1s linear;
 
-      &:hover {
+      &:hover:not(:disabled) {
         color: #4FAF3B;
         background-color: white;
+        cursor: pointer;
         transition: background-color 0.1s linear;
       }
     }
