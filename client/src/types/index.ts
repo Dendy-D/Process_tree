@@ -1,1 +1,2 @@
-export type { EmployeeT } from './Employee';
+export type { Employee } from './Employee';
+export type { Process, CreateProcess } from './Process';

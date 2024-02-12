@@ -37,6 +37,10 @@ const Process = sequelize.define('Process', {
       key: 'id',
     }
   },
+  isFirstLevel: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+  }
 });
 
 Process.belongsTo(Employee, { foreignKey: 'processOwnerId', as: 'processOwner' });
