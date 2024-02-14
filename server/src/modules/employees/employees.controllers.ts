@@ -5,7 +5,8 @@ const getAllEmployees = async () => {
   return await Employee.findAll({
     attributes: {
       exclude: ['createdAt', 'updatedAt'],
-    }
+    },
+    order: [['name', 'ASC']],
   });
 };
 

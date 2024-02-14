@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 
 import processesStore from '../../stores/processesStore';
-import { Process } from '../../types';
+import employeesStore from '../../stores/employeesStore';
+import { Process, ProcessStatus } from '../../types';
 import Modal from '../ui/Modal';
 import CreateProcessForm from '../CreateProcessForm';
 import EditProccesForm from '../EditProcessForm';
+import DeleteProcessForm from '../DeleteProcessForm';
 import Add from '../../assets/icons/add.svg?react';
 import Edit from '../../assets/icons/edit.svg?react';
 import TrashBin from '../../assets/icons/trashBin.svg?react';
@@ -15,18 +17,33 @@ import classes from './Table.module.scss';
 const Table: React.FC = observer(() => {
   const [isCreateProcessModalOpen, setCreateProcessModalOpen] = useState(false);
   const [isEditProcessModalOpen, setEditProcessModalOpen] = useState(false);
-  const [editingProcessId, setEditingProcessId] = useState<number>();
+  const [isDeleteProcessModalOpen, setDeleteProcessModalOpen] = useState(false);
+  const [processId, setProcessId] = useState<number>();
+
+  const { fetchAllEmployees, analystEmployees, employees, isLoading } = employeesStore;
 
   const handleEditProcess = (id: number) => {
     setEditProcessModalOpen(true);
-    setEditingProcessId(id);
-  }
+    setProcessId(id);
+  };
+
+  const handleDeleteProcess = (id: number) => {
+    setDeleteProcessModalOpen(true);
+    setProcessId(id);
+  };
 
   const { processes, fetchAllProcesses } = processesStore;
   
   useEffect(() => {
     fetchAllProcesses();
-  }, [fetchAllProcesses]);
+    fetchAllEmployees();
+  }, [fetchAllProcesses, fetchAllEmployees]);
+
+  const statusColors: { [key in ProcessStatus]: string } = {
+    [ProcessStatus.Main]: 'black',
+    [ProcessStatus.Supporting]: 'red',
+    [ProcessStatus.Administering]: 'blue',
+  };
 
   return (
     <div className={classes.component}>
@@ -45,19 +62,48 @@ const Table: React.FC = observer(() => {
             <tr key={process.id} className={classes.tableRow}>
               <td className={classes.processName}>
                 <div className={classes.processNameContent}>
-                  {/* <div></div> */}
+                  {process.status && (
+                    <div
+                      className={classes.circle}
+                      style={{ backgroundColor: statusColors[process.status] }}
+                    />
+                  )}
                   <div>{process.name}</div>
                   <div className={classes.icons}>
                     <Add />
                     <Edit onClick={() => handleEditProcess(process.id)}/>
-                    <TrashBin />
+                    <TrashBin onClick={() => handleDeleteProcess(process.id)} />
                   </div>
                 </div>
               </td>
               <td>{process.exitFromProcess}</td>
               <td>{process.VDlink}</td>
-              <td>{process.processOwner?.name}</td>
-              <td>{process.analyst?.name}</td>
+              <td>
+                <select
+                  name="analystId"
+                  id="analystId"
+                  value={process.analyst?.name}
+                >
+                  {analystEmployees.map(({id, name}) => (
+                    <option key={id} value={id}>{name}</option>
+                  ))}
+                </select>
+              </td>
+
+              {/* <select name="analystId" id="analystId" value={formData.analystId} onChange={handleChange}>
+                {isLoading ? (
+                  <option>Loading...</option>
+                ) : (
+                  <>
+                    <option value={undefined}></option>
+                    {analystEmployees.map(({id, name}) => (
+                      <option key={id} value={id}>{name}</option>
+                    ))}
+                  </>
+                )}
+              </select> */}
+              {/* <td>{process.processOwner?.name}</td> */}
+              {/* <td>{process.analyst?.name}</td> */}
             </tr>
           ))}
         </tbody>
@@ -73,7 +119,10 @@ const Table: React.FC = observer(() => {
         <CreateProcessForm levelOfProcess='первого' onClose={() => setCreateProcessModalOpen(false)} />
       </Modal>
       <Modal isOpen={isEditProcessModalOpen} onClose={() => setEditProcessModalOpen(false)}>
-         <EditProccesForm onClose={() => setEditProcessModalOpen(false)} editingProcessId={editingProcessId} />
+         <EditProccesForm onClose={() => setEditProcessModalOpen(false)} processId={processId as number} />
+      </Modal>
+      <Modal isOpen={isDeleteProcessModalOpen} onClose={() => setDeleteProcessModalOpen(false)}>
+         <DeleteProcessForm onClose={() => setDeleteProcessModalOpen(false)} processId={processId as number} />
       </Modal>
     </div>
   );

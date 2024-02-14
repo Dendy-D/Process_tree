@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 
 import employeesStore from '../../stores/employeesStore';
 import processesStore from '../../stores/processesStore';
+import { useKeyboardEvents } from '../../hooks/useKeyboardEvents';
+import { useFormValidation } from '../../hooks/useFormValidation';
+import { Process } from '../../types';
 import RadioButton from '../ui/RadioButton';
 import classes from './EditProcessForm.module.scss';
 
+import Skeleton from '@mui/material/Skeleton';
+
 type Props = {
   onClose: () => void;
-  editingProcessId: number;
+  processId: number;
 };
 
-const EditProcessForm: React.FC<Props> = observer(({ onClose, editingProcessId }) => {
+const EditProcessForm: React.FC<Props> = observer(({ processId, onClose }) => {
   const { fetchAllEmployees, analystEmployees, employees, isLoading } = employeesStore;
-  const { createFirstLevelProcess } = processesStore;
+  const { updateProcess, fetchProcessById, isLoading: singleProcessLoading } = processesStore;
 
-  console.log('editingProcessId: ', editingProcessId);
-
-  const [status, setStatus] = useState('main');
-  const [isNameValid, setIsNameValid] = useState(false);
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-
-  const [formData, setFormData] = useState({
+  const [processData, setProcessData] = useState<Process>();
+  const [showSkeleton, setShowSkeleton] = useState(true);
+  
+  const { isValid, isChecked, formData, handleChange, handleChangeProcessStatus, setFormData } = useFormValidation({
     name: '',
     exitFromProcess: '',
     VDlink: '',
@@ -30,42 +32,97 @@ const EditProcessForm: React.FC<Props> = observer(({ onClose, editingProcessId }
     analystId: undefined,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (name === 'name') {
-      setIsNameValid(value.trim() !== '');
+  console.log(processData)
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleUpdateProcess = (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+    if (!isValid()) return;
+    onClose();
+    updateProcess(processId, formData);
+  };
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isValid()) {
+        handleUpdateProcess();
+      } else {
+        formRef.current?.reportValidity();
+      }
+    }
+    if (e.key === 'Escape') {
+      onClose();
     }
   };
 
-  const handleChangeProcessStatus = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStatus(e.target.value);
-    const { value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      status: value,
-    }));
-  };
+  useKeyboardEvents(handleKeyPress, onClose);
 
-  const isChecked = (value: string) => status === value;
-
-  const createProcess = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCancel = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setIsFormSubmitted(true);
-    if (!isNameValid) return;
     onClose();
-    createFirstLevelProcess(formData)
-  };
+  }
 
   useEffect(() => {
-    fetchAllEmployees()
-  }, [fetchAllEmployees]);
+    let timeoutId: number;
+    const fetchProcessData = async () => {
+      const process = await fetchProcessById(processId);
+      setProcessData(process);
+
+      timeoutId = setTimeout(() => setShowSkeleton(false), 0);
+    }
+    fetchProcessData();
+    fetchAllEmployees();
+
+    return () => {
+      clearTimeout(timeoutId);
+    }
+  }, [fetchAllEmployees, fetchProcessById, processId]);
+
+  useEffect(() => {
+    if (processData) {
+      setFormData({
+        name: processData.name,
+        exitFromProcess: processData.exitFromProcess || '',
+        VDlink: processData.VDlink || '',
+        status: processData.status || 'main',
+        processOwnerId: processData.processOwner?.id || undefined,
+        analystId: processData.analyst?.id || undefined,
+      });
+    }
+  }, [processData, setFormData]);
+
+  if (showSkeleton || singleProcessLoading) {
+    return (
+      <div className={classes.component}>
+        <Skeleton width={490} height={32} />
+        <div className={classes.wrapper}>
+          <div className={classes.inputWrapper}>
+            <Skeleton width={490} height={32} />
+            <Skeleton width={490} height={32} />
+          </div>
+          <div>
+            <Skeleton width={55} height={25} />
+            <Skeleton width={130} height={60} />
+          </div>
+        </div>
+        <Skeleton width={215} height={32} />
+        <Skeleton width={215} height={32} />
+        <div className={classes.buttonGroup}>
+          <Skeleton width={67} height={25} />
+          <Skeleton width={32} height={25} />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <form className={classes.component} onSubmit={(e) => createProcess(e)} >
+    <form
+      className={classes.component}
+      onSubmit={(e) => handleUpdateProcess(e)}
+      ref={formRef}
+    >
       <input
         type="text"
         className={classes.nameOfProcess}
@@ -74,9 +131,9 @@ const EditProcessForm: React.FC<Props> = observer(({ onClose, editingProcessId }
         value={formData.name}
         onChange={handleChange}
         autoFocus
-        onFocus={() => setIsFormSubmitted(false)}
+        required
       />
-      <hr className={isFormSubmitted && !isNameValid ? classes.invalid : ''}/>
+      <hr />
       <div className={classes.wrapper}>
         <div className={classes.inputWrapper}>
           <div className={classes.formGroup}>
@@ -138,7 +195,7 @@ const EditProcessForm: React.FC<Props> = observer(({ onClose, editingProcessId }
             <option>Loading...</option>
           ) : (
             <>
-              <option value=""></option>
+              <option value={undefined}></option>
               {employees.map(({id, name}) => (
                 <option key={id} value={id}>{name}</option>
               ))} 
@@ -153,7 +210,7 @@ const EditProcessForm: React.FC<Props> = observer(({ onClose, editingProcessId }
             <option>Loading...</option>
           ) : (
             <>
-              <option value=""></option>
+              <option value={undefined}></option>
               {analystEmployees.map(({id, name}) => (
                 <option key={id} value={id}>{name}</option>
               ))}
@@ -162,8 +219,8 @@ const EditProcessForm: React.FC<Props> = observer(({ onClose, editingProcessId }
         </select>
       </div>
       <div className={classes.buttonGroup}>
-        <button className={classes.cancelButton} onClick={onClose}>Отмена</button>
-        <button className={classes.okButton}>Ок</button>
+        <button className={classes.cancelButton} onClick={handleCancel}>Отмена</button>
+        <button className={classes.okButton} type="submit">Ок</button>
       </div>
     </form>
   );

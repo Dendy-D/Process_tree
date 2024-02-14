@@ -47,6 +47,28 @@
         svg {
           cursor: pointer;
         }
+
+        .circle {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+        }
+      }
+
+      select {
+        background-color: #F2F2F2;
+        border-radius: 100px;
+        font-weight: 400;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 8px;
+        width: 215px;
+
+        // adding two arrows to the right and to the left in the selector 
+        background-image: url('../../assets/icons/person.svg'), url('../../assets/icons/arrowForSelect.svg');
+        background-repeat: no-repeat, no-repeat;
+        background-position: 0.5rem center, calc(100% - 0.75rem) center;
+        padding-left: 2rem;
       }
     }
   }

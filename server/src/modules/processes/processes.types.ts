@@ -21,14 +21,7 @@ type CreateProcess = {
   analystId?: number;
 }
 
-type UpdateProcess = {
-  name?: string;
-  exitFromProcess?: string;
-  VDlink?: string;
-  status?: string;
-  processOwnerId?: number;
-  analystId?: number;
-};
+type UpdateProcess = Omit<Partial<CreateProcess> , 'isFirstLevel'>;
 
 type ProcessRelation = {
   id: number;

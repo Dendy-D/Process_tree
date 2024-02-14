@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 
 import employeesStore from '../../stores/employeesStore';
 import processesStore from '../../stores/processesStore';
+import { useKeyboardEvents } from '../../hooks/useKeyboardEvents';
+import { useFormValidation } from '../../hooks/useFormValidation';
 import RadioButton from '../ui/RadioButton';
 import classes from './CreateProcessForm.module.scss';
 
@@ -15,11 +17,7 @@ const CreateProcessForm: React.FC<Props> = observer(({ levelOfProcess, onClose }
   const { fetchAllEmployees, analystEmployees, employees, isLoading } = employeesStore;
   const { createFirstLevelProcess } = processesStore;
 
-  const [status, setStatus] = useState('main');
-  const [isNameValid, setIsNameValid] = useState(false);
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-
-  const [formData, setFormData] = useState({
+  const { isValid, isChecked, formData, handleChange, handleChangeProcessStatus } = useFormValidation({
     name: '',
     exitFromProcess: '',
     VDlink: '',
@@ -28,42 +26,46 @@ const CreateProcessForm: React.FC<Props> = observer(({ levelOfProcess, onClose }
     analystId: undefined,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (name === 'name') {
-      setIsNameValid(value.trim() !== '');
-    }
-  };
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleChangeProcessStatus = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStatus(e.target.value);
-    const { value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      status: value,
-    }));
-  };
-
-  const isChecked = (value: string) => status === value;
-
-  const createProcess = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsFormSubmitted(true);
-    if (!isNameValid) return;
+  const createProcess = (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+    if (!isValid()) return;
     onClose();
     createFirstLevelProcess(formData)
   };
 
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isValid()) {
+        createProcess();
+      } else {
+        formRef.current?.reportValidity();
+      }
+    }
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
+  useKeyboardEvents(handleKeyPress, onClose);
+
+  const handleCancel = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    onClose();
+  }
+
   useEffect(() => {
-    fetchAllEmployees()
+    fetchAllEmployees();
   }, [fetchAllEmployees]);
 
   return (
-    <form className={classes.component} onSubmit={(e) => createProcess(e)} >
+    <form
+      className={classes.component}
+      onSubmit={(e) => createProcess(e)}
+      ref={formRef}
+    >
       <input
         type="text"
         className={classes.nameOfProcess}
@@ -72,9 +74,9 @@ const CreateProcessForm: React.FC<Props> = observer(({ levelOfProcess, onClose }
         value={formData.name}
         onChange={handleChange}
         autoFocus
-        onFocus={() => setIsFormSubmitted(false)}
+        required
       />
-      <hr className={isFormSubmitted && !isNameValid ? classes.invalid : ''}/>
+      <hr />
       <div className={classes.wrapper}>
         <div className={classes.inputWrapper}>
           <div className={classes.formGroup}>
@@ -160,7 +162,7 @@ const CreateProcessForm: React.FC<Props> = observer(({ levelOfProcess, onClose }
         </select>
       </div>
       <div className={classes.buttonGroup}>
-        <button className={classes.cancelButton} onClick={onClose}>Отмена</button>
+        <button className={classes.cancelButton} onClick={handleCancel}>Отмена</button>
         <button className={classes.okButton}>Ок</button>
       </div>
     </form>

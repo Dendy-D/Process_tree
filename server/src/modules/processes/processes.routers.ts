@@ -68,9 +68,19 @@ router.put('/:id', async (req, res) => {
 
     const { id } = req.params;
 
-    await updateProcess({ name, exitFromProcess, VDlink, status, processOwnerId, analystId }, id);
+    const updatedProcessData = {
+      name,
+      exitFromProcess: exitFromProcess || null,
+      VDlink: VDlink || null,
+      status,
+      processOwnerId: processOwnerId || null,
+      analystId: analystId || null,
+    };
+
+    await updateProcess(updatedProcessData, id);
     res.status(200).send('Process was successfully updated');
   } catch (e) {
+    console.log(e);
     res.status(500).send(e);
   }
 });

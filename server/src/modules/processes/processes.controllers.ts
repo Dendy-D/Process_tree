@@ -26,11 +26,12 @@ const getAllProcesses = async (isFirstLevel: boolean) => {
         as: 'analyst',
         attributes: {
           exclude: ['createdAt', 'updatedAt']
-        }, 
+        },
       },
     ],
     raw : true,
     nest : true,
+    order:  [['createdAt', 'ASC']],
   });
 };
 
