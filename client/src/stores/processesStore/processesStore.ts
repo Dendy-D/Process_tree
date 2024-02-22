@@ -84,7 +84,7 @@ class ProcessesStore {
       const processes = await processesStoreService.getAllProcesses();
       runInAction(() => {
         this.processes = processes;
-      })
+      });
     } catch (error) {
       this.isError = true;
       console.error('Error updating process: ', error)
@@ -101,10 +101,28 @@ class ProcessesStore {
       const processes = await processesStoreService.getAllProcesses();
       runInAction(() => {
         this.processes = processes;
-      })
+      });
     } catch (error) {
       this.isError = true;
       console.error('Error deleting process: ', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  createChildProcess = async (processId: number, body: CreateProcess) => {
+    this.isLoading = true;
+
+    try {
+      await processesStoreService.createChildProcess(processId, body);
+      const processes = await processesStoreService.getAllProcesses();
+      runInAction(() => {
+        this.processes = processes;
+      });
+      console.log('lalala')
+    } catch (error) {
+      this.isError = true;
+      console.error('Error creating child process: ', error);
     } finally {
       this.isLoading = false;
     }

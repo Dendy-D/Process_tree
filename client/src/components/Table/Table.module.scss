@@ -12,9 +12,10 @@
       border-bottom: 1px solid #5B5B5B;
 
       th {
+        text-align: left;
         font-weight: 300;
         font-size: 14px;
-        padding: 0 65px 8px 65px;
+        padding: 0 32px 8px 32px;
       }
     }
 
@@ -24,34 +25,64 @@
       td {
         font-weight: 300;
         font-size: 24px;
-        padding: 11px 65px;
+        padding: 11px 32px;
+        
+        max-width: 250px;
+        min-width: 250px;
+      }
+
+      .tdWithInputField {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        input {
+          max-width: 150px;
+        }
       }
     }
 
     tbody {
-      .processNameContent {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 10px 30px 10px 20px;
-        background-color: #94CE87;
-        border-radius: 100px;
-        font-weight: 500;
+      .processNameTd {
+        max-width: 450px;
+        min-width: 450px;
 
-        .icons {
+        .processNameContent {
           display: flex;
+          align-items: center;
+          justify-content: space-between;
           gap: 10px;
+          padding: 10px 30px 10px 20px;
+          background-color: #94CE87;
+          border-radius: 100px;
+          font-weight: 500;
+  
+          .icons {
+            display: flex;
+            gap: 10px;
+          }
+  
+          svg {
+            cursor: pointer;
+          }
+  
+          .circle {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+          }
         }
 
-        svg {
-          cursor: pointer;
+        .processName {
+          max-width: 150px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
-
-        .circle {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
+  
+        .processNameField {
+          max-width: 120px;
         }
       }
 
@@ -61,7 +92,7 @@
         font-weight: 400;
         font-size: 24px;
         cursor: pointer;
-        padding: 8px;
+        padding: 8px 30px;
         width: 215px;
 
         // adding two arrows to the right and to the left in the selector 
@@ -69,6 +100,12 @@
         background-repeat: no-repeat, no-repeat;
         background-position: 0.5rem center, calc(100% - 0.75rem) center;
         padding-left: 2rem;
+      }
+
+      .editingField {
+        font-size: 24px;
+        font-family: Roboto, system-ui, Helvetica, Arial, sans-serif;
+        font-weight: 300;
       }
     }
   }

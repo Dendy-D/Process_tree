@@ -11,11 +11,13 @@ import classes from './CreateProcessForm.module.scss';
 type Props = {
   levelOfProcess: string;
   onClose: () => void;
+  isChildProcess: boolean;
+  processId: number;
 };
 
-const CreateProcessForm: React.FC<Props> = observer(({ levelOfProcess, onClose }) => {
+const CreateProcessForm: React.FC<Props> = observer(({ levelOfProcess, onClose, processId, isChildProcess }) => {
   const { fetchAllEmployees, analystEmployees, employees, isLoading } = employeesStore;
-  const { createFirstLevelProcess } = processesStore;
+  const { createFirstLevelProcess, createChildProcess } = processesStore;
 
   const { isValid, isChecked, formData, handleChange, handleChangeProcessStatus } = useFormValidation({
     name: '',
@@ -32,7 +34,12 @@ const CreateProcessForm: React.FC<Props> = observer(({ levelOfProcess, onClose }
     e?.preventDefault();
     if (!isValid()) return;
     onClose();
-    createFirstLevelProcess(formData)
+    console.log(isChildProcess)
+    if (isChildProcess) {
+      createChildProcess(processId, formData);
+    } else {
+      createFirstLevelProcess(formData);
+    }
   };
 
   const handleKeyPress = (e: KeyboardEvent) => {

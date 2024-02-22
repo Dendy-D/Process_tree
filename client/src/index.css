@@ -38,6 +38,7 @@ hr {
 input, select {
   outline: none;
   border: none;
+  width: auto;
 }
 
 select {

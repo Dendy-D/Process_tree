@@ -21,6 +21,10 @@ class ProcessesService {
   deleteProcess = async (processId: number): Promise<void> => {
     return axiosApi.delete<void>(`/processes/${processId}`);
   }
+
+  createChildProcess = async (processId: number, body: CreateProcess): Promise<void> => {
+    return axiosApi.post<void, CreateProcess>(`/processes/${processId}/children`, body);
+  }
 }
 
 export default new ProcessesService();
