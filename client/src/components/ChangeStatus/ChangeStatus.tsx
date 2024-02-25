@@ -1,22 +1,50 @@
-// import { useFormValidation } from '../../hooks/useFormValidation';
+import { useState } from 'react';
+
+import { useKeyboardEvents } from '../../hooks/useKeyboardEvents';
+import { Process, ProcessStatus } from '../../types';
 import RadioButton from '../ui/RadioButton';
 import classes from './Change.module.scss';
 
 type Props = {
   onClose: () => void;
   handleChangeProcessStatus: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isChecked: (value: string) => boolean;
+  process: Process;
 };
 
-const ChangeStatus: React.FC<Props> = ({ onClose, isChecked, handleChangeProcessStatus }) => {
-  // const { isValid, isChecked, formData, handleChange, handleChangeProcessStatus, setFormData } = useFormValidation({
-  //   name: '',
-  //   exitFromProcess: '',
-  //   VDlink: '',
-  //   status: 'main',
-  //   processOwnerId: undefined,
-  //   analystId: undefined,
-  // });
+const ChangeStatus: React.FC<Props> = ({ onClose, handleChangeProcessStatus, process }) => {
+  const [selectedStatus, setSelectedStatus] = useState(process.status);
+
+  const isChecked = (value: string) => selectedStatus === value;
+
+  const handleStatusChange = (status: ProcessStatus) => {
+    setSelectedStatus(status);
+  };
+
+  const convertToChangeEvent = (status: ProcessStatus | undefined): React.ChangeEvent<HTMLInputElement> => {
+    return {
+      target: {
+        name: status,
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+  };
+
+  const handleOk = () => {
+    console.log(convertToChangeEvent(selectedStatus))
+    handleChangeProcessStatus(convertToChangeEvent(selectedStatus));
+    onClose();
+  };
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleChangeProcessStatus(convertToChangeEvent(selectedStatus));
+      onClose();
+    }
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
+  useKeyboardEvents(handleKeyPress, onClose);
 
   return (
     <div className={classes.modal}>
@@ -26,7 +54,7 @@ const ChangeStatus: React.FC<Props> = ({ onClose, isChecked, handleChangeProcess
           id='main'
           name='main'
           value='main'
-          onChange={handleChangeProcessStatus}
+          onChange={() => handleStatusChange('main')}
           checked={isChecked('main')}
           color='black'
         />
@@ -35,7 +63,7 @@ const ChangeStatus: React.FC<Props> = ({ onClose, isChecked, handleChangeProcess
           id='supporting'
           name='supporting'
           value='supporting'
-          onChange={handleChangeProcessStatus}
+          onChange={() => handleStatusChange('supporting')}
           checked={isChecked('supporting')}
           color='#F26427'
         />
@@ -44,14 +72,14 @@ const ChangeStatus: React.FC<Props> = ({ onClose, isChecked, handleChangeProcess
           id='administering'
           name='administering'
           value='administering'
-          onChange={handleChangeProcessStatus}
+          onChange={() => handleStatusChange('administering')}
           checked={isChecked('administering')}
           color='#3A44A0'
         />
       </div>
       <div className={classes.buttonGroup}>
         <button className={classes.cancelButton} onClick={onClose}>Отмена</button>
-        <button className={classes.okButton} type="submit">Ок</button>
+        <button className={classes.okButton} onClick={handleOk} type="submit">Ок</button>
       </div>
     </div>
   );

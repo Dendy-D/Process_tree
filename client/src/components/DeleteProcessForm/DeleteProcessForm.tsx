@@ -19,14 +19,14 @@ const DeleteProcessForm: React.FC<Props> = observer(({ processId, onClose }) => 
   }
 
   const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleDeleteProcess();
-      }
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleDeleteProcess();
+    }
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
 
   useKeyboardEvents(handleKeyPress, onClose);
 

@@ -4,7 +4,7 @@ import debounce from 'lodash/debounce';
 
 import processesStore from '../../stores/processesStore';
 import employeesStore from '../../stores/employeesStore';
-import { Process, ProcessStatus, UpdateProcess } from '../../types';
+import { Process, ProcessStatusEnum, UpdateProcess } from '../../types';
 import Modal from '../ui/Modal';
 import CreateProcessForm from '../CreateProcessForm';
 import EditProccesForm from '../EditProcessForm';
@@ -58,10 +58,10 @@ const Table: React.FC = observer(() => {
     fetchAllEmployees();
   }, [fetchAllProcesses, fetchAllEmployees]);
 
-  const statusColors: { [key in ProcessStatus]: string } = {
-    [ProcessStatus.Main]: 'black',
-    [ProcessStatus.Supporting]: 'red',
-    [ProcessStatus.Administering]: 'blue',
+  const statusColors: { [key in ProcessStatusEnum]: string } = {
+    [ProcessStatusEnum.Main]: 'black',
+    [ProcessStatusEnum.Supporting]: 'red',
+    [ProcessStatusEnum.Administering]: 'blue',
   };
 
   const handleEdit = (field: string, id: number, value: string) => {
@@ -75,23 +75,41 @@ const Table: React.FC = observer(() => {
     [updateProcess],
   );
 
-  const handleUpdate = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, processId: number, process: Process) => {
-    const { value } = e.target;
+  const handleUpdate = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    processId: number,
+    process: Process,
+    fieldName?: string,
+  ) => {
+    const { value, name } = e.target;
+    const updatedStatus: ProcessStatusEnum | undefined = name as ProcessStatusEnum;
 
-    console.log(value);
+    // console.log(name);
 
-    setEditingProcessValue(value);
+    if (!fieldName) {
+      setEditingProcessValue(value);
+    }
 
     const updateProcessBody = {
       name: process.name,
       exitFromProcess: process.exitFromProcess,
       VDlink: process.VDlink,
       status: process.status,
-      processOwner: process.processOwner?.id,
-      analyst: process.analyst?.id,
+      processOwnerId: process.processOwner?.id,
+      analystId: process.analyst?.id,
     };
 
-    debouncedUpdateProcess(processId, { ...updateProcessBody, [editingFieldName]: value });
+    console.log(updateProcessBody)
+
+    // debouncedUpdateProcess(processId, { ...updateProcessBody, [fieldName ? fieldName : editingFieldName]: value });
+    updateProcess(
+      processId,
+      {
+        ...updateProcessBody,
+        [fieldName ? fieldName : editingFieldName]: value,
+        status: updatedStatus || updateProcessBody.status,
+      }
+    )
   };
 
   const handleStatusChange = (id: number) => {
@@ -151,8 +169,11 @@ const Table: React.FC = observer(() => {
                     />
                   )}
                   {(isStatusChangeOpen && editingProcessId === process.id) && (
-                    <div></div>
-                      // <ChangeStatus onClose={onClose} handleChangeProcessStatus={handleChangeProcessStatus} isChecked={isChecked} />
+                    <ChangeStatus
+                      onClose={onClose}
+                      handleChangeProcessStatus={(e) => handleUpdate(e, process.id, process)}
+                      process={process}
+                    />
                   )}
                   <div
                     onDoubleClick={() => handleEdit('name', process.id, process.name)}
@@ -235,11 +256,8 @@ const Table: React.FC = observer(() => {
                 <select
                   name="processOwnerId"
                   id="processOwnerId"
-                  // value={process.analyst?.id}
                   value={process.processOwner?.id || undefined}
-                  onChange={(e) => handleUpdate(e, process.id, process)}
-                  // defaultValue={process.processOwner?.id}
-                  // value={editingProcessValue}
+                  onChange={(e) => handleUpdate(e, process.id, process, 'processOwnerId')}
                 >
                   <option value={undefined}></option>
                   {employees.map(({id, name}) => (
@@ -251,9 +269,8 @@ const Table: React.FC = observer(() => {
                 <select
                   name="analystId"
                   id="analystId"
-                  // defaultValue={process.analyst?.id}
                   value={process.analyst?.id || undefined}
-                  onChange={(e) => handleUpdate(e, process.id, process)}
+                  onChange={(e) => handleUpdate(e, process.id, process, 'analystId')}
                 >
                   <option value={undefined}></option>
                   {analystEmployees.map(({id, name}) => (

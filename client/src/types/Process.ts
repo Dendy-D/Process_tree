@@ -20,7 +20,9 @@ export type CreateProcess = {
   analyst?: number;
 };
 
-export enum ProcessStatus {
+export type ProcessStatus = 'main' | 'supporting' | 'administering';
+
+export enum ProcessStatusEnum {
   Main = 'main',
   Supporting = 'supporting',
   Administering = 'administering',
